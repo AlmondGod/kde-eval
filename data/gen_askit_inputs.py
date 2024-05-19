@@ -4,17 +4,11 @@ import sys
 import numpy as np
 
 def output(fname, a):
-    f = open(fname, 'w')
-    for i in range(a.shape[0]):
-        s = []
-        for j in range(a.shape[1]):
-            if a[i][j] == 0:
-                s.append('0')
-            else:
-                s.append('%.8f ' % a[i][j])
-        f.write(' '.join(s))
-        f.write('\n')
-    f.close()
+    with open(fname, 'w') as f:
+        for row in a:
+            row_str = [str(val) if val != 0 else '0' for val in row]
+            f.write(','.join(row_str))
+            f.write('\n')
 
 if __name__ == "__main__":
     ds = sys.argv[1]
