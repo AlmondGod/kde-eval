@@ -7,13 +7,12 @@ from functools import partial as partial
 import sys
 import numpy as np
 
-def gaussian_kernel(x, sigma=1.0):
-    return np.exp(-0.5 * (x / sigma)**2)
+def gaussian_kernel(x):
+    return np.exp(-0.5 * (x / 2)**2)
 
 datasets = {
 	'covtype': [54, 581012, 10000, 2.2499],
 	'shuttle': [9, 43500, 43500, 0.621882],
-
 }
 
 kernel_data = np.loadtxt("data/our_data_askit.data", delimiter=',', skiprows=0)

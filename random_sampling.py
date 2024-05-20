@@ -1,65 +1,85 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.special import erf as erf
-from functools import partial as partial
-import numpy as np
 
-def gaussian_kernel(x, sigma=1.0):
-    return np.exp(-0.5 * (x / sigma)**2)
+def gaussian_kernel(x):
+    return np.exp(-0.5 * (x / 2)**2)
+
+def student_t_kernel(x):
+    return 1 / (x + 1)
 
 datasets = {
-	'covtype': [54, 581012, 10000, 2.2499],
-	'shuttle': [9, 43500, 43500, 0.621882],
-
+    'covtype': [54, 581012, 10000, 2.2499],
+    'shuttle': [9, 43500, 43500, 0.621882],
 }
 
+# Load data
 kernel_data = np.loadtxt("data/our_data_askit.data", delimiter=',', skiprows=0)
 test_data = np.loadtxt("data/our_data_askit_query.data", delimiter=',', skiprows=0)
 print("Dimensions of kernel_data:", kernel_data.shape)
 print("Dimensions of test_data:", test_data.shape)
 
-kernel_data = kernel_data[:10000] #for time efficiency's sake, can uncomment
-q_point = test_data[0]
+# Use a subset of kernel_data for efficiency
+kernel_data = kernel_data[:10000]
+q_point = test_data[100]
 
 def kernel_density_true(data, query):
     kde = 0
     for row in data:
         diff = query - row
-        kde += gaussian_kernel(np.linalg.norm(diff)) / len(kernel_data)
+        kde += gaussian_kernel(np.linalg.norm(diff)) / len(data)
     return kde
 
 kde_true = kernel_density_true(kernel_data, q_point)
-print(kde_true)
+print("True KDE:", kde_true)
 
-def kde_random_sampling(data, query, num_samples):
+def kde_random_sampling(data, fun, query, num_samples):
     rand_kde = 0
-    num_reps = 100
+    num_reps = 500
     for _ in range(num_reps):
-        samples = np.random.choice(range(0, len(kernel_data)), num_samples)
+        samples = np.random.choice(range(0, len(data)), num_samples, replace=False)
         kde = 0
         for i in samples:
             diff = query - data[i]
-            kde += gaussian_kernel(np.linalg.norm(diff)) / (num_reps * num_samples)
-        rand_kde += kde
-    return rand_kde
+            kde += fun(np.linalg.norm(diff))
+        rand_kde += kde / num_samples
+    return rand_kde / num_reps
 
-loss = []
+def generate_sampling_points(max_value, base=2):
+    T_values = []
+    T = 1
+    while T <= max_value:
+        T_values.append(T)
+        T *= base
+    return np.array(T_values)
 
-exponents = np.arange(0, 19)
-exp_array = 2 ** exponents
+max_samples = 10000
+T_values = generate_sampling_points(max_samples)
+print("Sampling points (T values):", T_values)
 
-lin_array = range(0, len(kernel_data), int(len(kernel_data) / 40))
-
-for i in exp_array:
-    kde = kde_random_sampling(kernel_data, q_point, int(i))
-    print(str(i) + " has: " + str(kde))
-    loss.append(np.abs(kde - kde_true))
+# Calculate and plot losses for Gaussian kernel
+gloss = []
+stloss = []
+for T in T_values:
+    gkde = kde_random_sampling(kernel_data, gaussian_kernel, q_point, T)
+    skde = kde_random_sampling(kernel_data, student_t_kernel, q_point, T)
+    gloss.append(np.abs(gkde - kde_true))
+    stloss.append(np.abs(skde - kde_true))
+    print(f"T={T}, Gaussian KDE={gkde}, gLoss={gloss[-1]}, Student-t KDE={skde}, stLoss={stloss[-1]} ")
 
 output_file = "loss_output.txt"
 with open(output_file, 'a') as f:
-    for l in loss:
-        f.write(str(l) + '\n')  
+    f.write("exponential scale:")
+    for l in gloss:
+        f.write("gaussian loss:" + str(l) + '\n')  
+    for l in stloss:
+        f.write("student-t loss:" + str(l) + '\n')
 print("Losses saved to:", output_file)
 
-plt.plot(loss)
+plt.plot(T_values, gloss, label='Gaussian Kernel Loss')
+plt.plot(T_values, stloss, label='Student-t Kernel Loss')
+plt.xlabel('Number of Samples (T)')
+plt.ylabel('Loss')
+plt.xscale('log')
+plt.yscale('log')
+plt.legend()
 plt.show()
