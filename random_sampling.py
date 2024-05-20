@@ -1,25 +1,25 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def gaussian_kernel(x):
-    return np.exp(-0.5 * (x / 2)**2)
+def gaussian_kernel(x, sigma=1.0):
+    return np.exp(-0.5 * (x)**2)
 
-def student_t_kernel(x):
-    return 1 / (x + 1)
+def student_kernel(x, sigma=1.0):
+    return 1/((x)**2+1)
 
 datasets = {
     'covtype': [54, 581012, 10000, 2.2499],
     'shuttle': [9, 43500, 43500, 0.621882],
 }
 
-# Load data
 kernel_data = np.loadtxt("data/our_data_askit.data", delimiter=',', skiprows=0)
 test_data = np.loadtxt("data/our_data_askit_query.data", delimiter=',', skiprows=0)
 print("Dimensions of kernel_data:", kernel_data.shape)
 print("Dimensions of test_data:", test_data.shape)
 
-# Use a subset of kernel_data for efficiency
-kernel_data = kernel_data[:10000]
+# we use a subset of kernel_data for efficiency
+# kernel_data = kernel_data[:10000]
+kernel_data = np.random.choice(kernel_data, 10000, replace=False) #random sample to reduce kernel data
 q_point = test_data[100]
 
 def kernel_density_true(data, query):
@@ -56,14 +56,13 @@ max_samples = 10000
 T_values = generate_sampling_points(max_samples)
 print("Sampling points (T values):", T_values)
 
-# Calculate and plot losses for Gaussian kernel
 gloss = []
 stloss = []
 for T in T_values:
     gkde = kde_random_sampling(kernel_data, gaussian_kernel, q_point, T)
     skde = kde_random_sampling(kernel_data, student_t_kernel, q_point, T)
-    gloss.append(np.abs(gkde - kde_true))
-    stloss.append(np.abs(skde - kde_true))
+    gloss.append(np.abs((gkde - kde_true) / kde_true))
+    stloss.append(np.abs((skde - kde_true) / kde_true))
     print(f"T={T}, Gaussian KDE={gkde}, gLoss={gloss[-1]}, Student-t KDE={skde}, stLoss={stloss[-1]} ")
 
 output_file = "loss_output.txt"
