@@ -24,7 +24,7 @@ kernel_data = np.loadtxt("data/our_data_askit.data", delimiter=',', skiprows=0)
 test_data = np.loadtxt("data/our_data_askit_query.data", delimiter=',', skiprows=0)
 print("Dimensions of kernel_data:", kernel_data.shape)
 print("Dimensions of test_data:", test_data.shape)
-first_two_rows = test_data[1000:2000]
+first_two_rows = test_data[2000:2500]
 kernel_sums = []
 kernel_sums2 = []
 
