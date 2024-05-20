@@ -26,7 +26,7 @@ if __name__ == "__main__":
     # Output space seperate file
     output('%s_askit.data' % ds, data)
 
-    e = np.loadtxt('../exact/%s' % exact_file, delimiter=',')
+    e = np.loadtxt('%s' % exact_file, delimiter=',')
     # Get query data points
     query = np.zeros((e.shape[0], data.shape[1]))
     for i in range(e.shape[0]):

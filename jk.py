@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from scipy.special import erf as erf
 from functools import partial as partial
 import sys
-
+import numpy as np
 
 def gaussian_kernel(x, sigma=1.0):
     return np.exp(-0.5 * (x / sigma)**2)
@@ -16,7 +16,6 @@ datasets = {
 
 }
 
-import numpy as np
 kernel_data = np.loadtxt("data/our_data_askit.data", delimiter=',', skiprows=0)
 test_data = np.loadtxt("data/our_data_askit_query.data", delimiter=',', skiprows=0)
 print("Dimensions of kernel_data:", kernel_data.shape)
