@@ -23,22 +23,10 @@ datasets = {
 	'shuttle': [9, 43500, 43500, 0.621882],
 }
 
-<<<<<<< HEAD
 kernel_data = np.loadtxt("testing_askit.data", delimiter=',', skiprows=0)
 test_data = np.loadtxt("testing_askit_query.data", delimiter=',', skiprows=0)
 a = kernel_data[:, 1:]
 b = test_data[:, 1:]
-=======
-kernel_data = np.loadtxt("data/our_data_askit.data", delimiter=',', skiprows=0)
-test_data = np.loadtxt("data/our_data_askit_query.data", delimiter=',', skiprows=0)
-print("Dimensions of kernel_data:", kernel_data.shape)
-print("Dimensions of test_data:", test_data.shape)
-first_two_rows = test_data[2000:2500]
-kernel_sums = []
-kernel_sums2 = []
->>>>>>> 76f32c56e55759cc151db061a16e6b3e92eebbd7
-
-
 
 first_two_rows = b[5000:10000]
 kernel_sums = []
@@ -50,7 +38,6 @@ for i, row in enumerate(first_two_rows):
     
     kernel_sum = 0
     kernel_sum2 = 0
-<<<<<<< HEAD
     
     for point in a:
         diff = point - row
@@ -60,14 +47,6 @@ for i, row in enumerate(first_two_rows):
     kernel_sum = kernel_sum / 581012
     kernel_sum2 = kernel_sum2 / 581012
     
-=======
-    for point in kernel_data:
-        diff = point - row
-        kernel_sum += gaussian_kernel(np.linalg.norm(diff))
-        kernel_sum2  += student_kernel(np.linalg.norm(diff))
-    kernel_sum = kernel_sum/581012
-    kernel_sum2 = kernel_sum2/581012
->>>>>>> 76f32c56e55759cc151db061a16e6b3e92eebbd7
     kernel_sums.append(kernel_sum)
     kernel_sums2.append(kernel_sum2)
 
