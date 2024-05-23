@@ -9,13 +9,13 @@ def student_kernel(x, sigma=1.0):
     return 1/((x)**2+1)
 
 kernel_data = np.loadtxt("data/our_data_askit.data", delimiter=',', skiprows=0)[:, 1:]
+query_data = np.loadtxt("data/testing_askit_query.data", delimiter=',', skiprows=0)[:, 1:]
 
-# we use a subset of kernel_data for efficiency
-# kernel_data = kernel_data[:10000]
-indices = np.random.choice(range(1, len(kernel_data)), 10000, replace=False) #random sample to reduce kernel data
-kernel_data = kernel_data[indices]
+# # we use a subset of kernel_data for efficiency
+# indices = np.random.choice(range(1, len(kernel_data)), 10000, replace=False) #random sample to reduce kernel data
+# kernel_data = kernel_data[indices]
 print("Dimensions of kernel_data:", kernel_data.shape)
-query = kernel_data[1]
+query = query_data[1]
 print(query)
 
 def kernel_density_true(data, query, fun):

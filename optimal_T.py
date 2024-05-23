@@ -46,14 +46,14 @@ for i, eval_delta in enumerate(eval_deltas):
         optimalTs_student[i, j] = T
         print(f"delta = {eval_delta}, epsilon = {eval_epsilon}, optimal T is {T}")
 
-with open("optimal_T_gaussian.txt", 'w') as f:
-    f.write("kde_true = {rs.kde_true_gauss}\n")
+with open("optimal_T_gaussian.txt", 'a') as f:
+    f.write(f"kde_true = {rs.kde_true_gauss}\n")
     for i, row in enumerate(optimalTs_gaussian):
         for j, index in enumerate(row):
             f.write(f"for delta = {eval_deltas[i]}, epsilon = {eval_epsilons[j]}, optimal T is {index}\n")
 
-with open("optimal_T_student.txt", 'w') as f:
-    f.write("kde_true = {rs.kde_true_student}\n")
+with open("optimal_T_student.txt", 'a') as f:
+    f.write(f"kde_true = {rs.kde_true_student}\n")
     for i, row in enumerate(optimalTs_student):
         for j, index in enumerate(row):
             f.write(f"for delta = {eval_deltas[i]}, epsilon = {eval_epsilons[j]}, optimal T is {index}\n")

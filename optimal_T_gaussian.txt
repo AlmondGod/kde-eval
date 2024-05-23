@@ -1,3 +1,4 @@
+Using our_data_askit[0] query
 kde_true = 0.0031362034610614912 
 for delta = 0.99, epsilon = 1, optimal T is 1.0
 for delta = 0.99, epsilon = 0.5, optimal T is 8.0
@@ -30,6 +31,45 @@ for delta = 0.01, epsilon = 0.01, optimal T is 10000.0
 for delta = 0.01, epsilon = 0.001, optimal T is 10000.0
 for delta = 0.01, epsilon = 0.0001, optimal T is 10000.0
 for delta = 0.001, epsilon = 1, optimal T is 8.0
+for delta = 0.001, epsilon = 0.5, optimal T is 8192.0
+for delta = 0.001, epsilon = 0.1, optimal T is 10000.0
+for delta = 0.001, epsilon = 0.01, optimal T is 10000.0
+for delta = 0.001, epsilon = 0.001, optimal T is 10000.0
+for delta = 0.001, epsilon = 0.0001, optimal T is 10000.0
+
+Using testing_askit_query[0] query
+kde_true = 0.00033386729848882183
+for delta = 0.99, epsilon = 1, optimal T is 1.0
+for delta = 0.99, epsilon = 0.5, optimal T is 16.0
+for delta = 0.99, epsilon = 0.1, optimal T is 32.0
+for delta = 0.99, epsilon = 0.01, optimal T is 512.0
+for delta = 0.99, epsilon = 0.001, optimal T is 10000.0
+for delta = 0.99, epsilon = 0.0001, optimal T is 10000.0
+for delta = 0.9, epsilon = 1, optimal T is 1.0
+for delta = 0.9, epsilon = 0.5, optimal T is 128.0
+for delta = 0.9, epsilon = 0.1, optimal T is 1024.0
+for delta = 0.9, epsilon = 0.01, optimal T is 10000.0
+for delta = 0.9, epsilon = 0.001, optimal T is 10000.0
+for delta = 0.9, epsilon = 0.0001, optimal T is 10000.0
+for delta = 0.5, epsilon = 1, optimal T is 1.0
+for delta = 0.5, epsilon = 0.5, optimal T is 512.0
+for delta = 0.5, epsilon = 0.1, optimal T is 8192.0
+for delta = 0.5, epsilon = 0.01, optimal T is 10000.0
+for delta = 0.5, epsilon = 0.001, optimal T is 10000.0
+for delta = 0.5, epsilon = 0.0001, optimal T is 10000.0
+for delta = 0.1, epsilon = 1, optimal T is 1.0
+for delta = 0.1, epsilon = 0.5, optimal T is 4096.0
+for delta = 0.1, epsilon = 0.1, optimal T is 10000.0
+for delta = 0.1, epsilon = 0.01, optimal T is 10000.0
+for delta = 0.1, epsilon = 0.001, optimal T is 10000.0
+for delta = 0.1, epsilon = 0.0001, optimal T is 10000.0
+for delta = 0.01, epsilon = 1, optimal T is 2.0
+for delta = 0.01, epsilon = 0.5, optimal T is 8192.0
+for delta = 0.01, epsilon = 0.1, optimal T is 10000.0
+for delta = 0.01, epsilon = 0.01, optimal T is 10000.0
+for delta = 0.01, epsilon = 0.001, optimal T is 10000.0
+for delta = 0.01, epsilon = 0.0001, optimal T is 10000.0
+for delta = 0.001, epsilon = 1, optimal T is 4096.0
 for delta = 0.001, epsilon = 0.5, optimal T is 8192.0
 for delta = 0.001, epsilon = 0.1, optimal T is 10000.0
 for delta = 0.001, epsilon = 0.01, optimal T is 10000.0
