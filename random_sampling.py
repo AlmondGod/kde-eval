@@ -15,7 +15,7 @@ query_data = np.loadtxt("data/testing_askit_query.data", delimiter=',', skiprows
 # indices = np.random.choice(range(1, len(kernel_data)), 10000, replace=False) #random sample to reduce kernel data
 # kernel_data = kernel_data[indices]
 print("Dimensions of kernel_data:", kernel_data.shape)
-query = query_data[1]
+query = query_data[1000]
 print(query)
 
 def kernel_density_true(data, query, fun):

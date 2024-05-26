@@ -1,22 +1,13 @@
 import numpy as np
-import matplotlib as mpath
-import matplotlib.patches as mpatches
-import matplotlib.pyplot as plt
 from scipy.special import erf as erf
 from functools import partial as partial
-import sys
 import numpy as np
-<<<<<<< HEAD
-from scipy.spatial.distance import pdist, squareform
-=======
->>>>>>> 76f32c56e55759cc151db061a16e6b3e92eebbd7
 
 def gaussian_kernel(x, sigma=1.0):
     return np.exp(-0.5 * (x)**2)
 
 def student_kernel(x, sigma=1.0):
     return 1/((x)**2+1)
-
 
 datasets = {
 	'covtype': [54, 581012, 10000, 2.2499],
