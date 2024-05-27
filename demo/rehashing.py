@@ -636,7 +636,7 @@ class rehashing:
             plt.bar(np.arange(len(collision_prob)+1), \
                     np.append(rV_RS_mean, rV_H_mean), \
                     tick_label=map(lambda x: str(x), \
-                                   ['RS'] + range(len(collision_prob))))
+                                   ['RS'] + [x for x in range(len(collision_prob))]))
             plt.title('Relative Variance for Random Queries')
 
             self.log_condition_plot(lambda_eps, Lambda_eps, threshold)
@@ -648,7 +648,7 @@ class rehashing:
 if __name__ == "__main__":
     #%%  Problem Specificaiton
     # example dataset
-    points = np.loadtxt(open("../resources/data/covtype.csv", "rb"), delimiter=",",\
+    points = np.loadtxt(open("C:/users/almon/kde-eval/data/covtype_normed.csv", "rb"), delimiter=",",\
                         skiprows=0)
     points = points.transpose()
     (d,n) = points.shape
