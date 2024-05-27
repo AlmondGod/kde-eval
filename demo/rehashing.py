@@ -261,9 +261,11 @@ class rehashing:
             Example: instance.eval_density(query_point)
         """
 
+        print(f"query point length: {len(query_point)}")
         z = 0
         for i in range(self.num_of_points):
-                z = z + self.kernel(self.points[i], query_point)\
+                # print(f"query point length: {len(query_point)}")
+                z = z + self.kernel(self.points[:, i], query_point)\
                                 * self.weights[i]
         return z
 
@@ -654,9 +656,13 @@ if __name__ == "__main__":
     (d,n) = points.shape
     # specify kernel evaluation paramaters
     weights = np.ones(n) / n
+
+    print(f"length of points: {len(points)}")
+    print(f"length of weights: {len(weights)}")
     sigma = np.sqrt(np.mean(np.mean(points**2))) / 5 # example bandwidth
     # exponential kernel
     kernel_fun = lambda x,y: np.exp(-np.linalg.norm(x-y) / sigma)
+    print(len(points[0]))
 
     #%%  Rehashing methodology
     # lower bound of densities of interest suggested value is 0.1 / sqrt{n}
@@ -668,6 +674,7 @@ if __name__ == "__main__":
     # Create sketch
     covtype.create_sketch(method='random', accuracy=eps, threshold=tau,\
                   num_of_means=1)
+    print(covtype.eval_density(points[:, 0]))
     # Set parameters for hashing through eLSH
     hash_probs = []
     R = np.log(1/eps/tau) # effective diameter for exponential kernel
