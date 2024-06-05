@@ -6,10 +6,7 @@ from scipy.special import erf as erf
 from functools import partial as partial
 import sys
 import numpy as np
-<<<<<<< HEAD
 from scipy.spatial.distance import pdist, squareform
-=======
->>>>>>> 76f32c56e55759cc151db061a16e6b3e92eebbd7
 
 def gaussian_kernel(x, sigma=1.0):
     return np.exp(-0.5 * (x)**2)
@@ -28,7 +25,9 @@ test_data = np.loadtxt("testing_askit_query.data", delimiter=',', skiprows=0)
 a = kernel_data[:, 1:]
 b = test_data[:, 1:]
 
-first_two_rows = b[5000:10000]
+
+
+first_two_rows = b[0:3000]
 kernel_sums = []
 kernel_sums2 = []
 

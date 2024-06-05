@@ -1,0 +1,30 @@
+True KDE: 0.00016065306597126463
+
+At t = 1, gaussian RPE=1.0 and student RPE=0.9998434262151994 
+with gaussian time=0.7680163383483887 and student time=0.8178322315216064
+At t = 2, gaussian RPE=0.9999999999999212 and student RPE=0.9999452069137745 
+with gaussian time=0.7147588729858398 and student time=0.7138781547546387
+At t = 4, gaussian RPE=1.0 and student RPE=0.9997432468469674 
+with gaussian time=0.8850839138031006 and student time=0.8012604713439941
+At t = 8, gaussian RPE=0.056148328004643935 and student RPE=2.136497487998173 
+with gaussian time=0.9334616661071777 and student time=0.7834277153015137
+At t = 16, gaussian RPE=0.556148328004624 and student RPE=0.5684152774012263 
+with gaussian time=0.7729370594024658 and student time=0.900285005569458
+At t = 32, gaussian RPE=0.37499999999999517 and student RPE=0.410305972811358 
+with gaussian time=0.8736898899078369 and student time=0.817241907119751
+At t = 64, gaussian RPE=0.5274072949970975 and student RPE=0.1733010236469348 
+with gaussian time=1.1883659362792969 and student time=0.9970178604125977
+At t = 128, gaussian RPE=0.4339907294997 and student RPE=0.40426906098823645 
+with gaussian time=1.6370770931243896 and student time=1.3005452156066895
+At t = 256, gaussian RPE=0.07286109424956161 and student RPE=0.21424764474038144 
+with gaussian time=3.2584640979766846 and student time=1.99055814743042
+At t = 512, gaussian RPE=0.11551622337550346 and student RPE=0.0938162192938204 
+with gaussian time=3.479957103729248 and student time=2.905191659927368
+At t = 1024, gaussian RPE=0.008689817625071719 and student RPE=0.023751640576894068 
+with gaussian time=6.269603967666626 and student time=5.200685262680054
+At t = 2048, gaussian RPE=0.05273437500000038 and student RPE=0.1363986073929696 
+with gaussian time=11.318246603012085 and student time=9.372425317764282
+At t = 4096, gaussian RPE=0.028868636015670694 and student RPE=0.05100926581281346 
+with gaussian time=22.051833629608154 and student time=17.846286058425903
+At t = 8192, gaussian RPE=0.006073494492164933 and student RPE=0.04207889891510632 
+with gaussian time=49.47358703613281 and student time=62.191452503204346
