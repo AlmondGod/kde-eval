@@ -19,7 +19,7 @@ def new_alg (delta, epsilon, query, data, var_kernel, kernel_fun):
     print(f"tau: {tau}")
     points = np.array(data).transpose()
     print(f"points shape: {points.shape[1]}")
-    ghbe = GHBE(points, tau, eps=1, kernel_fun=var_kernel)
+    ghbe = GHBE(points, tau, eps=2, kernel_fun=var_kernel)
     var_est = ghbe.AMR(query)
     print(f"variance estimate: {var_est}")
     true_var = true_kernel_density(data, query, var_kernel)
@@ -52,8 +52,8 @@ def new_alg (delta, epsilon, query, data, var_kernel, kernel_fun):
 var_kernel = lambda x,y: np.exp(-0.125 * np.linalg.norm(x-y)**2)
 kernel_fun = lambda x,y: np.exp(-0.5 * np.linalg.norm(x-y)**2)
 
-query = b[0]
-data = a[:1000]
+query = b[100]
+data = a[:10000]
 delta = 0.1
 epsilon = 0.1
 new_alg(delta, epsilon, query, data, var_kernel, kernel_fun)

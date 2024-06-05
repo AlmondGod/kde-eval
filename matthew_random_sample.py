@@ -25,8 +25,8 @@ datasets = {
 
 }
 
-kernel_data = np.loadtxt("testing_askit.data", delimiter=',', skiprows=0)
-test_data = np.loadtxt("testing_askit_query.data", delimiter=',', skiprows=0)
+kernel_data = np.loadtxt("data/testing_askit.data", delimiter=',', skiprows=0)
+test_data = np.loadtxt("data/testing_askit_query.data", delimiter=',', skiprows=0)
 a = kernel_data[:, 1:]
 b = test_data[:, 1:]
 epsilon = 0.2
@@ -36,51 +36,51 @@ print(k)
  
 
 
-first_two_rows = b[0:3000]
-kernel_sums = []
-kernel_sums2 = []
+# first_two_rows = b[0:3000]
+# kernel_sums = []
+# kernel_sums2 = []
 
-for i, row in enumerate(first_two_rows):
-    if i % 100 == 0:
-        print(i)
+# for i, row in enumerate(first_two_rows):
+#     if i % 100 == 0:
+#         print(i)
     
-    kernel_sumGauss = 0
-    kernel_sumStudent = 0
-    j = 0
-    # averageGauss = 1    #averageStudent = 1
-    # condition = 1 / (epsilon**2 * delta * averageGauss)
+#     kernel_sumGauss = 0
+#     kernel_sumStudent = 0
+#     j = 0
+#     # averageGauss = 1    #averageStudent = 1
+#     # condition = 1 / (epsilon**2 * delta * averageGauss)
 
-    while j < 30000:
-        r = random.randint(0, 581011)
-        diff = a[r] - row
-        kernel_sumGauss += gaussian_kernel(np.linalg.norm(diff))
-        #kernel_sumStudent += student_kernel(np.linalg.norm(diff))
+#     while j < 30000:
+#         r = random.randint(0, 581011)
+#         diff = a[r] - row
+#         kernel_sumGauss += gaussian_kernel(np.linalg.norm(diff))
+#         #kernel_sumStudent += student_kernel(np.linalg.norm(diff))
         
-        j += 1
-        # averageGauss = kernel_sumGauss/j
-        # print(j)
-        #averageStudent = kernel_sum/i
+#         j += 1
+#         # averageGauss = kernel_sumGauss/j
+#         # print(j)
+#         #averageStudent = kernel_sum/i
         
-        # condition = 2 / (epsilon**2  * averageGauss)
+#         # condition = 2 / (epsilon**2  * averageGauss)
   
-        # print(averageGauss)
-        # run nearest neighbor search, boostrap for upperbound on variance
-        # if (averageGauss < 0.001):
-        #     output_file = "testingtestingtesting.txt"   
-        #     with open(output_file, 'a') as f:
-        #         f.write(str(i) + "space" + str(j) + '\n')
+#         # print(averageGauss)
+#         # run nearest neighbor search, boostrap for upperbound on variance
+#         # if (averageGauss < 0.001):
+#         #     output_file = "testingtestingtesting.txt"   
+#         #     with open(output_file, 'a') as f:
+#         #         f.write(str(i) + "space" + str(j) + '\n')
         
-    averageGauss = kernel_sumGauss/30000
-    kernel_sums.append(averageGauss)
-    #kernel_sums2.append(kernel_sum2)
+#     averageGauss = kernel_sumGauss/30000
+#     kernel_sums.append(averageGauss)
+#     #kernel_sums2.append(kernel_sum2)
 
-output_file = "kernel_sums_output_random_testing1.txt"
-with open(output_file, 'w') as f:
-    for kernel_sum in kernel_sums:
-        f.write(str(kernel_sum) + '\n')
-# output_file1 = "student_sums_output_random.txt"
-# with open(output_file1, 'w') as f:
-#     for kernel_sum2 in kernel_sums2:
-#         f.write(str(kernel_sum2) + '\n')
+# output_file = "kernel_sums_output_random_testing1.txt"
+# with open(output_file, 'w') as f:
+#     for kernel_sum in kernel_sums:
+#         f.write(str(kernel_sum) + '\n')
+# # output_file1 = "student_sums_output_random.txt"
+# # with open(output_file1, 'w') as f:
+# #     for kernel_sum2 in kernel_sums2:
+# #         f.write(str(kernel_sum2) + '\n')
 
-print("Kernel sums saved to:", output_file)
+# print("Kernel sums saved to:", output_file)
