@@ -80,7 +80,7 @@ class hash_table:
 class ELSH:
 
     def __init__(self, M, X, w, k, kernel_fun= lambda x, y :\
-                    np.exp(-np.linalg.norm(x-y))):
+                    np.exp(-0.5 * (np.linalg.norm(x-y)** 2))):
 
         self.HT = [hash_table() for i in range(M)]
         self.scale = w # scale to normalize distances
@@ -126,7 +126,7 @@ class ELSH:
 
 class GHBE:
 
-    def __init__(self, X, tau, eps):
+    def __init__(self, X, tau, eps, kernel_fun=lambda x, y : np.exp(-0.5 * (np.linalg.norm(x-y)** 2))):
         self. eps = eps
         self.R = np.sqrt(np.log(1 / tau)) # effective diameter of the set
         self.gamma = 0.5           # rate that we decrease our estimate
@@ -142,7 +142,7 @@ class GHBE:
                     self.RelVar(self.mui[j]))) for j in range(self.I)]
         print(self.Mi)
         self.HTA = [ELSH(self.Mi[j], X, self.wi[j], self.ki[j],\
-                         lambda x, y : np.exp(-np.linalg.norm(x-y)**2))\
+                         kernel_fun)\
                     for j in range(self.I)]
 
 
@@ -165,7 +165,7 @@ class GHBE:
 
 class EHBE:
 
-    def __init__(self, X, tau, eps):
+    def __init__(self, X, tau, eps, kernel_fun=lambda x, y : np.exp(-0.5 * (np.linalg.norm(x-y)** 2))):
         self. eps = eps
         self.R = np.log(1 / tau) # effective diameter of the set
         self.gamma = 0.5           # rate that we decrease our estimate
@@ -176,7 +176,7 @@ class EHBE:
         self.RelVar = lambda mu: np.e**1.854 * 1.0 / np.power(mu, 0.5)
         self.Mi = [int(3* np.ceil( eps**-2 *
                     self.RelVar(self.mui[j]))) for j in range(self.I)]
-        self.HTA = [ELSH(self.Mi[j], X, self.w, self.k)
+        self.HTA = [ELSH(self.Mi[j], X, self.w, self.k, kernel_fun)
                     for j in range(self.I)]
 
 
@@ -214,7 +214,7 @@ if __name__ == "__main__":
                      clusters, dimension, scales, spread)
     n = Instance1.N
     #%%
-    eps = 0.5
+    eps = 1
     tau = float(10**-3)
     print(f"Instance1 shape:{Instance1.X.shape}")
     kde1 = GHBE(Instance1.X, tau, eps)
