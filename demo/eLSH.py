@@ -62,7 +62,7 @@ class hash_table:
         n = X.shape[1]
         for i in range(n):
             key = self.h(X[:, i])
-            if not (self.H).has_key(key):
+            if not key in self.H:
                 self.H[key] = hash_bucket(X[:, i]) # create bucket
             else:
                 self.H[key].update(X[:, i]) # update bucket
@@ -72,7 +72,7 @@ class hash_table:
         Search hash table for bucket where query maps to, if empty return False
         """
         key = self.h(q)
-        if (self.H).has_key(key): # if bucket not empty
+        if key in self.H: # if bucket not empty
             return self.H[key].point # return point
         else:
             return False # bucket is empty
@@ -210,19 +210,20 @@ if __name__ == "__main__":
     density = 0.01
     dimension = 30
     spread = 0.02
-    Instance1 = kde.KDE_instance(kernel,  inverse, num_points, density,
+    Instance1 = kde.KDE_instance(kernel, inverse, num_points, density,
                      clusters, dimension, scales, spread)
     n = Instance1.N
     #%%
     eps = 0.5
     tau = float(10**-3)
+    print(f"Instance1 shape:{Instance1.X.shape}")
     kde1 = GHBE(Instance1.X, tau, eps)
 
     #%% Unit Test for (n,k,d,s)-Instance
     print ("================================")
     print ("Unit Test for Gaussian Kernel and random queries")
     print ("================================")
-    print ("Required relative error < {:.3f}").format(eps)
+    print (f"Required relative error < {eps}")
     print ("--------------------------------")
 
     iterations = 20
@@ -237,56 +238,56 @@ if __name__ == "__main__":
             kd = kd + kernel_fun(q, Instance1.X[:,i])
         kd = kd / n
         est = kde1.AMR(q)
-        print ("Estimate: {:f} True: {:f}".format(est, kd))
+        print (f"Estimate: {est} True: {kd}")
         if abs((kd - est) / kd) <= eps:
             cnt = cnt + 1
-        print ("Query {} rel-error: {:.3f}").format(j+1,(kd - est) / kd)
+        print (f"Query {j+1} rel-error: {(kd - est) / kd}")
 
     print ("--------------------------------")
-    print ("Failure prob: {:.2f}").format(1 - cnt / float(iterations))
+    print (f"Failure prob: {1 - cnt / float(iterations)}")
     print ("================================")
-    #%%  Problem Specificaiton for Exponential Kernel
-    kernel = lambda x: np.exp(-x)
-    inverse = lambda mu: - np.log(mu)
-    #%% Creating ``Uncorrelated" instance
-    num_points = 30
-    clusters = 60
-    scales = 3
-    density = 0.01
-    dimension = 30
-    spread = 0.02
-    Instance2 = kde.KDE_instance(kernel,  inverse, num_points, density,
-                     clusters, dimension, scales, spread)
-    n = Instance2.N
-    #%%
-    eps = 0.5
-    tau = float(10**-3)
-    kde2 = EHBE(Instance2.X, tau, eps)
+    # #%%  Problem Specificaiton for Exponential Kernel
+    # kernel = lambda x: np.exp(-x)
+    # inverse = lambda mu: - np.log(mu)
+    # #%% Creating ``Uncorrelated" instance
+    # num_points = 30
+    # clusters = 60
+    # scales = 3
+    # density = 0.01
+    # dimension = 30
+    # spread = 0.02
+    # Instance2 = kde.KDE_instance(kernel,  inverse, num_points, density,
+    #                  clusters, dimension, scales, spread)
+    # n = Instance2.N
+    # #%%
+    # eps = 0.5
+    # tau = float(10**-3)
+    # kde2 = EHBE(Instance2.X, tau, eps)
 
-    #%% Unit Test for (n,k,d,s)-Instance
-    print ("================================")
-    print ("Unit Test for Exponential kernel and random queries")
-    print ("================================")
-    print ("Required relative error < {:.3f}").format(eps)
-    print ("--------------------------------")
+    # #%% Unit Test for (n,k,d,s)-Instance
+    # print ("================================")
+    # print ("Unit Test for Exponential kernel and random queries")
+    # print ("================================")
+    # print (f"Required relative error < {eps}")
+    # print ("--------------------------------")
 
-    iterations = 20
-    cnt = 0
-    for j in range(iterations):
-        # Random queries around 0
-        q = np.zeros(Instance2.dimension) + np.random.randn(dimension) / np.sqrt(dimension)
-        kernel_fun = lambda x,y: np.exp(-np.linalg.norm(x-y))
+    # iterations = 20
+    # cnt = 0
+    # for j in range(iterations):
+    #     # Random queries around 0
+    #     q = np.zeros(Instance2.dimension) + np.random.randn(dimension) / np.sqrt(dimension)
+    #     kernel_fun = lambda x,y: np.exp(-np.linalg.norm(x-y))
 
-        kd = 0.0
-        for i in range(n):
-            kd = kd + kernel_fun(q, Instance2.X[:,i])
-        kd = kd / n
-        est = kde2.AMR(q)
-        print ("Estimate: {:f} True: {:f}".format(est, kd))
-        if abs((kd - est) / kd) <= eps:
-            cnt = cnt + 1
-        print ("Query {} rel-error: {:.3f}").format(j+1,(kd - est) / kd)
+    #     kd = 0.0
+    #     for i in range(n):
+    #         kd = kd + kernel_fun(q, Instance2.X[:,i])
+    #     kd = kd / n
+    #     est = kde2.AMR(q)
+    #     print (f"Estimate: {est} True: {kd}")
+    #     if abs((kd - est) / kd) <= eps:
+    #         cnt = cnt + 1
+    #     print (f"Query {j+1} rel-error: {(kd - est) / kd}")
 
-    print ("--------------------------------")
-    print ("Failure prob: {:.2f}").format(1 - cnt / float(iterations))
-    print ("================================")
+    # print ("--------------------------------")
+    # print (f"Failure prob: {1 - cnt / float(iterations)}")
+    # print ("================================")

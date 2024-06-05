@@ -8,15 +8,15 @@ def gaussian_kernel(x, sigma=1.0):
 def student_kernel(x, sigma=1.0):
     return 1/((x)**2+1)
 
-kernel_data = np.loadtxt("data/our_data_askit.data", delimiter=',', skiprows=0)[:, 1:]
-query_data = np.loadtxt("data/testing_askit_query.data", delimiter=',', skiprows=0)[:, 1:]
+# kernel_data = np.loadtxt("data/our_data_askit.data", delimiter=',', skiprows=0)[:, 1:]
+# query_data = np.loadtxt("data/testing_askit_query.data", delimiter=',', skiprows=0)[:, 1:]
 
 # # we use a subset of kernel_data for efficiency
 # indices = np.random.choice(range(1, len(kernel_data)), 10000, replace=False) #random sample to reduce kernel data
 # kernel_data = kernel_data[indices]
-print("Dimensions of kernel_data:", kernel_data.shape)
-query = query_data[1000]
-print(query)
+# print("Dimensions of kernel_data:", kernel_data.shape)
+# query = query_data[1000]
+# print(query)
 
 def kernel_density_true(data, query, fun):
     kde = 0
@@ -25,9 +25,9 @@ def kernel_density_true(data, query, fun):
         kde += fun(np.linalg.norm(diff)) / len(data)
     return kde
 
-kde_true_gauss = kernel_density_true(kernel_data, query, gaussian_kernel)
-kde_true_student = kernel_density_true(kernel_data, query, student_kernel)
-print(kde_true_gauss, kde_true_student)
+# kde_true_gauss = kernel_density_true(kernel_data, query, gaussian_kernel)
+# kde_true_student = kernel_density_true(kernel_data, query, student_kernel)
+# print(kde_true_gauss, kde_true_student)
 
 def kde_random_sampling(data, fun, query, num_samples, num_reps=500):
     kde_estimates = []
