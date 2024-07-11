@@ -2,3 +2,5 @@ data/covtype_normed.csv
 data/our_data_askit.data
 our_data_askit.data
 covtype_normed.csv
+
+large_data/
