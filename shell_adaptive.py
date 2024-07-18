@@ -4,8 +4,8 @@ from scipy.spatial import KDTree
 def student_kernel(x):
     return 1/((x)**2+1)
 
-kernel_data = np.loadtxt("data/testing_askit.data", delimiter=',', skiprows=0)[:, 1:]
-queries = np.loadtxt("data/testing_askit_query.data", delimiter=',', skiprows=0)[100:110, 1:]
+kernel_data = np.loadtxt('large_data/shuttle.tst')
+queries = np.loadtxt('large_data/shuttle.tst')[100:110]
 print("Data loaded")
 dataset_size = kernel_data.shape[0]
 dimensions = kernel_data.shape[1]
@@ -54,7 +54,7 @@ for q in range(len(queries)):
     variance = estimate_kernel_squared(projected_queries[q])
     
     j = 1
-    r = random.randint(0, 581011)
+    r = random.randint(0, dataset_size-1)
     diff = kernel_data[r] - queries[q]
     kernel_sumStudent = student_kernel(np.linalg.norm(diff))
     averageStudent = kernel_sumStudent/j

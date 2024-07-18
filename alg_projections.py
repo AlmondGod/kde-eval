@@ -8,13 +8,13 @@ def student_kernel(x):
 
 def gaussian_kernel(x, sigma=1.0):
     return np.exp(-(x)**2 / ((2 * (sigma**2))))
-
+print("loading data")
 with gzip.open('large_data/HIGGS.csv.gz', 'rb') as f:
     higgs_data = np.genfromtxt(f, delimiter=',', max_rows=1000000)
 with gzip.open('large_data/SUSY.csv.gz', 'rb') as f:
     susy_data = np.genfromtxt(f, delimiter=',', max_rows=1000000)
-# with gzip.open('large_data/all_train.csv.gz', 'rb') as f:
-#     hep_data = np.genfromtxt(f, delimiter=',', max_rows=1000000)
+with gzip.open('large_data/all_train.csv.gz', 'rb') as f:
+    hep_data = np.genfromtxt(f, delimiter=',', max_rows=1000000)
 # with gzip.open('large_data/ColorHistogram.asc.gz', 'rb') as f:
 #     corel_data = np.genfromtxt(f, delimiter=',', max_rows=1000000)
 print("halfway")
@@ -26,11 +26,11 @@ skin_data = np.loadtxt('large_data/Skin_NonSkin.txt')
 datasets = {
     'higgs': (higgs_data, 3.41),
     'susy': (susy_data, 2.24),
-    # 'skin': (skin_data, 0.24),
-    # 'shuttle': (shuttle_data, 0.62),
-    # 'sensorless': (sensorless_drive_data, 2.29),
-    # 'home': (home_data, 0.53),
-    # 'hep': (hep_data, 3.36),
+    'skin': (skin_data, 0.24),
+    'shuttle': (shuttle_data, 0.62),
+    'sensorless': (sensorless_drive_data, 2.29),
+    'home': (home_data, 0.53),
+    'hep': (hep_data, 3.36),
     # 'corel': (corel_data, 1.04)
     # 'covtype': (data, 2.25)
 }
@@ -58,7 +58,7 @@ def reduce_dim(data):
     projected_data = np.dot(data, gaussian_vectors.T) / np.sqrt(k)
     return projected_data
 
-n_queries = 100
+n_queries = 10000
 
 plt.figure(figsize=(20, 15))
 
@@ -80,7 +80,14 @@ for i, (name, (data, sigma)) in enumerate(datasets.items(), 1):
     projected_k_squared = [compute_kernel_squared_1d(data_1d, query, sigma) for query in oned_queries]
     percent_errors = [p / r for r, p in zip(regular_k_squared, projected_k_squared)]
 
+    count_less_than_one = sum(1 for pe in percent_errors if pe < 1)
+    print(f"Number of items where percent error < 1: {count_less_than_one}")
+
+    count_greater_than_one = sum(1 for pe in percent_errors if pe > 1)
+    print(f"Number of items where percent error > 1: {count_greater_than_one}")
+
     percent_errors.sort()
+    print(f"percent errors lowest ten: {[x.item() for x in percent_errors[:10]]}")
     plt.subplot(3, 3, i)
     plt.plot(range(1, n_queries + 1), percent_errors, marker='o', linestyle='-', markersize=3)
     plt.title(f"{name} (σ={sigma})")
