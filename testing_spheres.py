@@ -241,21 +241,17 @@ def plot_num_spheres_comparison(adaptive_results, hashing_results):
     plt.legend()
     plt.show()
 
-# Load data
 kernel_data = np.loadtxt('large_data/shuttle.tst')
 queries = np.loadtxt('large_data/shuttle.tst')[100:200]
 print("Data loaded")
 
-# Run comparisons
-num_trials = 5  # You can adjust this number
+num_trials = 5 
 k_adaptive_results, k_hashing_results = compare_k_values(kernel_data, queries, num_trials)
 spheres_adaptive_results, spheres_hashing_results = compare_num_spheres(kernel_data, queries, num_trials)
 
-# Plot results
 plot_k_comparison(k_adaptive_results, k_hashing_results)
 plot_num_spheres_comparison(spheres_adaptive_results, spheres_hashing_results)
 
-# Print detailed results
 print("\nK-value comparison results:")
 for k, (results, avg_error, avg_time) in k_adaptive_results.items():
     print(f"\nAdaptive Shell Algorithm (k={k}):")

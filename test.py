@@ -2,9 +2,6 @@ import numpy as np
 from scipy.spatial import KDTree
 import time
 from scipy.special import erf
-
-# Import the GHBE class from the provided code
-# Assuming the GHBE class and its dependencies are in a file named 'ghbe.py'
 from demo.eLSH import ELSH
 
 class GHBE:
@@ -57,11 +54,34 @@ def student_kernel(x):
     return 1/((x)**2+1)
 
 # Load data
-kernel_data = np.loadtxt('large_data/shuttle.tst')
-queries = np.loadtxt('large_data/shuttle.tst')[100:110]
+# with gzip.open('large_data/HIGGS.csv.gz', 'rb') as f:
+#     higgs_data = np.genfromtxt(f, delimiter=',', max_rows=1000000)
+# with gzip.open('large_data/SUSY.csv.gz', 'rb') as f:
+#     susy_data = np.genfromtxt(f, delimiter=',', max_rows=1000000)
+# with gzip.open('large_data/all_train.csv.gz', 'rb') as f:
+#     hep_data = np.genfromtxt(f, delimiter=',', max_rows=1000000)
+# print("halfway")
+# shuttle_data = np.loadtxt('large_data/shuttle.tst')
+# sensorless_drive_data = np.loadtxt('large_data/sensorless_drive_diagnosis.txt')
+# home_data = np.genfromtxt('large_data/HT_Sensor_dataset.dat', skip_header=1, delimiter=None)
+skin_data = np.loadtxt('large_data/Skin_NonSkin.txt')
+# kernel_data = np.loadtxt('large_data/shuttle.tst')
+# queries = np.loadtxt('large_data/shuttle.tst')[100:110]
+kernel_data = skin_data
+queries = skin_data[1000:1010]
 print("Data loaded")
+datasets = {
+    # 'higgs': (higgs_data, 3.41),
+    # 'susy': (susy_data, 2.24),
+    'skin': (skin_data, 0.24),
+    # 'shuttle': (shuttle_data, 0.62),
+    # 'sensorless': (sensorless_drive_data, 2.29),
+    # 'home': (home_data, 0.53),
+    # 'hep': (hep_data, 3.36),
+}
 
-# Adaptive Shell Algorithm
+sigma = 0.24
+
 def adaptive_shell_algorithm(kernel_data, queries):
     print("adaptive start")
     dataset_size = kernel_data.shape[0]
@@ -110,7 +130,7 @@ def adaptive_shell_algorithm(kernel_data, queries):
         diff = kernel_data[r] - queries[q]
         kernel_sumStudent = student_kernel(np.linalg.norm(diff))
         averageStudent = kernel_sumStudent/j
-        t = variance / ((averageStudent)**2 * (epsilon)**2)
+        t = variance / ((averageStudent) * (epsilon)**2)
 
         while (j < t):
             r = np.random.randint(0, dataset_size-1)
@@ -119,7 +139,7 @@ def adaptive_shell_algorithm(kernel_data, queries):
                     
             j += 1
             averageStudent = kernel_sumStudent/j
-            t = variance / (epsilon**2 * averageStudent**2)
+            t = variance / (epsilon**2 * averageStudent)
                 
         averageStudent = kernel_sumStudent/j
         
@@ -127,6 +147,8 @@ def adaptive_shell_algorithm(kernel_data, queries):
         
         percent_error = np.abs(averageStudent - actual_kernel_sq) / actual_kernel_sq
         overall_error += percent_error
+        print("variance: ", variance)
+        print("num guesses: ", j)   
 
         results.append((averageStudent, actual_kernel_sq, percent_error))
 
@@ -135,7 +157,6 @@ def adaptive_shell_algorithm(kernel_data, queries):
 
     return results, overall_error, execution_time
 
-# Hashing Based Estimation Algorithm
 def hashing_based_algorithm(kernel_data, queries):
     print("hbe start")
     tau = 1e-3
@@ -166,12 +187,10 @@ def hashing_based_algorithm(kernel_data, queries):
 
     return results, overall_error, execution_time
 
-# Run both algorithms
 
 adaptive_results, adaptive_overall_error, adaptive_time = adaptive_shell_algorithm(kernel_data, queries)
 hashing_results, hashing_overall_error, hashing_time = hashing_based_algorithm(kernel_data, queries)
 
-# Print results
 print(f"Adaptive Shell Algorithm:")
 print(f"Execution time: {adaptive_time:.2f} seconds")
 print(f"Overall error: {adaptive_overall_error:.10f}")

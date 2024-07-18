@@ -3,11 +3,8 @@ import csv
 import numpy as np
 import matplotlib.pyplot as plt
 
-def student_kernel(x):
-    return 1/((x)**2+1)
-
 def gaussian_kernel(x, sigma=1.0):
-    return np.exp(-(x)**2 / ((2 * (sigma**2))))
+    return np.exp(-(x)**2 / (2 * (sigma**2)))
 
 print("loading data")
 with gzip.open('large_data/HIGGS.csv.gz', 'rb') as f:
@@ -35,13 +32,6 @@ datasets = {
     # 'corel': (corel_data, 1.04)
     # 'covtype': (data, 2.25)
 }
-
-# def compute_ratio_for_query(data, query, sigma):
-#     distances = np.linalg.norm(data - query, axis=1)
-#     k = student_kernel(distances / sigma)
-#     E_k = np.mean(k)
-#     E_k_squared = np.mean(k**2)
-#     return E_k_squared / (E_k**2)
 
 def compute_kernel_squared(data, query, sigma):
     distances = np.linalg.norm(data - query, axis=1)
@@ -86,6 +76,8 @@ for i, (name, (data, sigma)) in enumerate(datasets.items(), 1):
 
     count_greater_than_one = sum(1 for pe in percent_errors if pe > 1)
     print(f"Number of items where percent error > 1: {count_greater_than_one}")
+    # print(f"regular kernel sq:  {regular_k_squared}")
+    # print(f"estimates: {projected_k_squared}")
 
     percent_errors.sort()
     print(f"percent errors lowest ten: {[x.item() for x in percent_errors[:10]]}")

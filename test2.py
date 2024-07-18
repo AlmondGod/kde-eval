@@ -117,19 +117,15 @@ def hashing_based_algorithm(kernel_data, queries):
 
     return results, overall_error, execution_time
 
-# Load data
 kernel_data = np.loadtxt('large_data/shuttle.tst')
 queries = np.loadtxt('large_data/shuttle.tst')[100:110]
 print("Data loaded")
 
-# Run both algorithms
 adaptive_results, adaptive_overall_error, adaptive_time = adaptive_shell_algorithm(kernel_data, queries)
 hashing_results, hashing_overall_error, hashing_time = hashing_based_algorithm(kernel_data, queries)
 
-# Create plots
 query_indices = range(1, len(queries) + 1)
 
-# Plot 1: Errors
 plt.figure(figsize=(12, 6))
 plt.plot(query_indices, [r[2] for r in adaptive_results], 'bo-', label='Adaptive Shell')
 plt.plot(query_indices, [r[2] for r in hashing_results], 'ro-', label='Hashing Based')
@@ -140,7 +136,6 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
-# Plot 2: Computation Time
 plt.figure(figsize=(12, 6))
 plt.plot(query_indices, [r[3] for r in adaptive_results], 'bo-', label='Adaptive Shell')
 plt.plot(query_indices, [r[3] for r in hashing_results], 'ro-', label='Hashing Based')
@@ -153,7 +148,6 @@ plt.grid(True)
 # plt.close()
 plt.show()
 
-# Print results
 print(f"Adaptive Shell Algorithm:")
 print(f"Execution time: {adaptive_time:.2f} seconds")
 print(f"Overall error: {adaptive_overall_error:.10f}")

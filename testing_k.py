@@ -13,31 +13,37 @@ def adaptive_shell_algorithm(kernel_data, queries, k=1, num_spheres=50):
     gaussian_vectors = np.random.normal(loc=0, scale=1, size=(k, dimensions))
     projected_data = np.dot(kernel_data, gaussian_vectors.T) / np.sqrt(k)
     projected_queries = np.dot(queries, gaussian_vectors.T) / np.sqrt(k)
+    print('init tree')
     tree = KDTree(projected_data)
 
     max_distance = np.max(projected_data) - np.min(projected_data)
     radii = np.linspace(0, max_distance, num_spheres + 1)[1:]
-
+    print(f"dataset size: {dataset_size}")
     def estimate_kernel_squared(query):
-        kernel_sq_estimate = 0
-        points_counted = 0
-        for i, radius in enumerate(radii):
-            if i == 0:
-                count = tree.query_ball_point(query.reshape(1, -1), radius, return_length=True)
-            else:
-                count = tree.query_ball_point(query.reshape(1, -1), radius, return_length=True) - \
-                        tree.query_ball_point(query.reshape(1, -1), radii[i-1], return_length=True)
+        sum = 0
+        for data in projected_data:
+            sum += student_kernel(np.linalg.norm(data - query))**2
+        return sum / dataset_size
+
+        # kernel_sq_estimate = 0
+        # points_counted = 0
+        # for i, radius in enumerate(radii):
+        #     if i == 0:
+        #         count = tree.query_ball_point(query.reshape(1, -1), radius, return_length=True)
+        #     else:
+        #         count = tree.query_ball_point(query.reshape(1, -1), radius, return_length=True) - \
+        #                 tree.query_ball_point(query.reshape(1, -1), radii[i-1], return_length=True)
             
-            if count > 0:
-                sample_distance = (radius + (radii[i-1] if i > 0 else 0)) / 2
-                kernel_sq_estimate += count * student_kernel(sample_distance)**2
-            points_counted += count
+        #     if count > 0:
+        #         sample_distance = (radius + (radii[i-1] if i > 0 else 0)) / 2
+        #         kernel_sq_estimate += count * student_kernel(sample_distance)**2
+        #     points_counted += count
         
-        return kernel_sq_estimate / points_counted if points_counted > 0 else 0
+        # return kernel_sq_estimate / points_counted if points_counted > 0 else 0
 
     epsilon = 0.5
     results = []
-    query_times = []
+    # query_times = []
 
     for q in queries:
         query_start_time = time.time()
@@ -47,20 +53,28 @@ def adaptive_shell_algorithm(kernel_data, queries, k=1, num_spheres=50):
         r = np.random.randint(0, dataset_size-1)
         kernel_sumStudent = student_kernel(np.linalg.norm(kernel_data[r] - q))
         averageStudent = kernel_sumStudent/j
-        t = variance / ((averageStudent)**2 * (epsilon)**2)
+        t = 2 * variance / ((averageStudent)**2 * (epsilon)**2)
 
         while j < t:
             r = np.random.randint(0, dataset_size-1)
             kernel_sumStudent += student_kernel(np.linalg.norm(kernel_data[r] - q))
             j += 1
             averageStudent = kernel_sumStudent/j
-            t = variance / (epsilon**2 * averageStudent**2)
+            t = 2 * variance / (epsilon**2 * averageStudent**2)
+        
+       
+        print("j: ", j)
                 
         averageStudent = kernel_sumStudent/j
-        actual_kernel_sq = np.mean([student_kernel(np.linalg.norm(x - q))**2 for x in kernel_data])
-        percent_error = np.abs(averageStudent - actual_kernel_sq) / actual_kernel_sq
         query_time = time.time() - query_start_time
-        results.append((averageStudent, actual_kernel_sq, percent_error, query_time))
+        print(query_time)
+        actual_kernel = np.mean([student_kernel(np.linalg.norm(x - q)) for x in kernel_data])
+        actual_kernel_sq = np.mean([student_kernel(np.linalg.norm(x - q)**2) for x in kernel_data])
+        percent_error = np.abs(averageStudent - actual_kernel) / actual_kernel
+        print(f"error: {percent_error}")
+        
+        print("variance over kernelsq:", variance / actual_kernel_sq)
+        results.append((averageStudent, actual_kernel, percent_error, query_time))
 
     overall_error = np.mean([r[2] for r in results])
     execution_time = sum([r[3] for r in results])
@@ -70,7 +84,7 @@ def adaptive_shell_algorithm(kernel_data, queries, k=1, num_spheres=50):
 def hashing_based_algorithm(kernel_data, queries):
     print("Hashing Based algorithm start")
     kde = GHBE(kernel_data.T, 
-           tau=1e-2, eps=0.2, gamma=0.6,
+           tau=0.1 / np.sqrt(1000), eps=0.2, gamma=0.6,
            max_levels=8, max_tables_per_level=500,
            k_factor=2, w_factor=1.0)
 
@@ -116,7 +130,7 @@ class GHBE:
         return Z / (self.Mi[i])
 
 def compare_k_values(kernel_data, queries, num_trials=5):
-    k_values = [1, 2, 3]
+    k_values = [1]
     adaptive_results = {}
     
     for k in k_values:
@@ -138,6 +152,7 @@ def compare_k_values(kernel_data, queries, num_trials=5):
     avg_hashing_time = np.mean([r[1] for r in hashing_trial_results])
     
     return adaptive_results, (hashing_results, avg_hashing_error, avg_hashing_time)
+    # return adaptive_results, ([],[],[])
 
 def plot_k_comparison(adaptive_results, hashing_results):
     k_values = list(adaptive_results.keys())
@@ -182,19 +197,23 @@ def plot_k_comparison(adaptive_results, hashing_results):
     plt.legend()
     plt.show()
 
-# Load data
-kernel_data = np.loadtxt('large_data/shuttle.tst')
-queries = np.loadtxt('large_data/shuttle.tst')
+import gzip
+with gzip.open('large_data/SUSY.csv.gz', 'rb') as f:
+    susy_data = np.genfromtxt(f, delimiter=',', max_rows=1000000)
+# with gzip.open('large_data/HIGGS.csv.gz', 'rb') as f:
+#     higgs_data = np.genfromtxt(f, delimiter=',', max_rows=4000000)
+# home_data = np.genfromtxt('large_data/HT_Sensor_dataset.dat', skip_header=1, delimiter=None)
+kernel_data = susy_data[0:1000]
+queries = susy_data[0:10]
+# kernel_data = np.loadtxt('large_data/shuttle.tst')
+# queries = np.loadtxt('large_data/shuttle.tst')[0:10]
 print("Data loaded")
 
-# Run comparison with multiple trials
-num_trials = 5  # You can adjust this number
+num_trials = 5  
 adaptive_results, hashing_results = compare_k_values(kernel_data, queries, num_trials)
 
-# Plot results
-plot_k_comparison(adaptive_results, hashing_results)
+# plot_k_comparison(adaptive_results, hashing_results)
 
-# Print detailed results
 for k, (results, avg_error, avg_time) in adaptive_results.items():
     print(f"\nAdaptive Shell Algorithm (k={k}):")
     print(f"Average execution time: {avg_time:.2f} seconds")
