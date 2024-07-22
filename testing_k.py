@@ -17,33 +17,44 @@ def adaptive_shell_algorithm(kernel_data, queries, k=1, num_spheres=50):
     tree = KDTree(projected_data)
 
     max_distance = np.max(projected_data) - np.min(projected_data)
+    
     radii = np.linspace(0, max_distance, num_spheres + 1)[1:]
     print(f"dataset size: {dataset_size}")
     def estimate_kernel_squared(query):
-        sum = 0
-        for data in projected_data:
-            sum += student_kernel(np.linalg.norm(data - query))**2
-        return sum / dataset_size
+        distances, _ = tree.query(query, k=2)
+        closest_distance = distances[0]
+        print(f"closest distance: {closest_distance}")
 
-        # kernel_sq_estimate = 0
-        # points_counted = 0
-        # for i, radius in enumerate(radii):
-        #     if i == 0:
-        #         count = tree.query_ball_point(query.reshape(1, -1), radius, return_length=True)
-        #     else:
-        #         count = tree.query_ball_point(query.reshape(1, -1), radius, return_length=True) - \
-        #                 tree.query_ball_point(query.reshape(1, -1), radii[i-1], return_length=True)
-            
-        #     if count > 0:
-        #         sample_distance = (radius + (radii[i-1] if i > 0 else 0)) / 2
-        #         kernel_sq_estimate += count * student_kernel(sample_distance)**2
-        #     points_counted += count
+        if closest_distance == 0.0:
+            closest_distance = distances[1]
+            print(f"Using second closest distance: {closest_distance}")
         
-        # return kernel_sq_estimate / points_counted if points_counted > 0 else 0
+        kernel_sq_estimate = 0
+        points_counted = 0
+        current_radius = closest_distance
+        total_points = 0
+        iters = 0
+        closest_radius = current_radius
+
+        while total_points < dataset_size:
+            count = tree.query_ball_point(query, current_radius, return_length=True)
+            new_points = count - total_points
+            print(f"closest edge {closest_radius}, far edge {current_radius}")
+            if new_points > 0:
+                kernel_sq_estimate += new_points * student_kernel(closest_radius)**2
+                points_counted += new_points
+            
+            current_radius *= 2
+            total_points = count
+            if (iters > 0):
+                closest_radius *= 2
+
+            iters += 1
+
+        return kernel_sq_estimate / points_counted if points_counted > 0 else 0
 
     epsilon = 0.5
     results = []
-    # query_times = []
 
     for q in queries:
         query_start_time = time.time()
@@ -62,7 +73,6 @@ def adaptive_shell_algorithm(kernel_data, queries, k=1, num_spheres=50):
             averageStudent = kernel_sumStudent/j
             t = 2 * variance / (epsilon**2 * averageStudent**2)
         
-       
         print("j: ", j)
                 
         averageStudent = kernel_sumStudent/j
@@ -152,19 +162,18 @@ def compare_k_values(kernel_data, queries, num_trials=5):
     avg_hashing_time = np.mean([r[1] for r in hashing_trial_results])
     
     return adaptive_results, (hashing_results, avg_hashing_error, avg_hashing_time)
-    # return adaptive_results, ([],[],[])
+    
 
 def plot_k_comparison(adaptive_results, hashing_results):
     k_values = list(adaptive_results.keys())
     
-    # Prepare data for plotting
     errors = [result[1] for result in adaptive_results.values()]
     times = [result[2] for result in adaptive_results.values()]
     
     hashing_error = hashing_results[1]
     hashing_time = hashing_results[2]
     
-    # Plot 1: Errors
+    # errors
     plt.figure(figsize=(12, 6))
     plt.bar(k_values, errors, label='Adaptive Shell')
     plt.axhline(y=hashing_error, color='r', linestyle='--', label='Hashing Based')
@@ -174,7 +183,7 @@ def plot_k_comparison(adaptive_results, hashing_results):
     plt.legend()
     plt.show()
     
-    # Plot 2: Execution Times
+    # execution Times
     plt.figure(figsize=(12, 6))
     plt.bar(k_values, times, label='Adaptive Shell')
     plt.axhline(y=hashing_time, color='r', linestyle='--', label='Hashing Based')
@@ -184,7 +193,7 @@ def plot_k_comparison(adaptive_results, hashing_results):
     plt.legend()
     plt.show()
     
-    # Plot 3: Error vs Time Scatter Plot
+    # error vs time scatter plot
     plt.figure(figsize=(12, 6))
     plt.scatter(times, errors, label='Adaptive Shell')
     for k, time, error in zip(k_values, times, errors):
@@ -198,13 +207,15 @@ def plot_k_comparison(adaptive_results, hashing_results):
     plt.show()
 
 import gzip
-with gzip.open('large_data/SUSY.csv.gz', 'rb') as f:
-    susy_data = np.genfromtxt(f, delimiter=',', max_rows=1000000)
+# with gzip.open('large_data/SUSY.csv.gz', 'rb') as f:
+#     susy_data = np.genfromtxt(f, delimiter=',', max_rows=1000000)
+
 # with gzip.open('large_data/HIGGS.csv.gz', 'rb') as f:
 #     higgs_data = np.genfromtxt(f, delimiter=',', max_rows=4000000)
-# home_data = np.genfromtxt('large_data/HT_Sensor_dataset.dat', skip_header=1, delimiter=None)
-kernel_data = susy_data[0:1000]
-queries = susy_data[0:10]
+home_data = np.genfromtxt('large_data/HT_Sensor_dataset.dat', skip_header=1, delimiter=None)
+data = home_data
+kernel_data = data[0:10000]
+queries = data[2000:2010]
 # kernel_data = np.loadtxt('large_data/shuttle.tst')
 # queries = np.loadtxt('large_data/shuttle.tst')[0:10]
 print("Data loaded")
@@ -216,9 +227,9 @@ adaptive_results, hashing_results = compare_k_values(kernel_data, queries, num_t
 
 for k, (results, avg_error, avg_time) in adaptive_results.items():
     print(f"\nAdaptive Shell Algorithm (k={k}):")
-    print(f"Average execution time: {avg_time:.2f} seconds")
+    print(f"Average execution time: {avg_time:.5f} seconds")
     print(f"Average overall error: {avg_error:.10f}")
 
 print(f"\nHashing Based Algorithm:")
-print(f"Average execution time: {hashing_results[2]:.2f} seconds")
+print(f"Average execution time: {hashing_results[2]:.5f} seconds")
 print(f"Average overall error: {hashing_results[1]:.10f}")
