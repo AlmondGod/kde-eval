@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 from demo.eLSH import ELSH
 
 def student_kernel(x):
-    return 1/((x)**2+1)
+    return 1/((x)**10+1)
 
 def adaptive_shell_algorithm(kernel_data, queries, k=1, num_spheres=50):
-    print(f"Adaptive Shell algorithm start with k={k}")
+    print(f"adaptive shell algorithm start with k={k}")
     dataset_size, dimensions = kernel_data.shape
     gaussian_vectors = np.random.normal(loc=0, scale=1, size=(k, dimensions))
     projected_data = np.dot(kernel_data, gaussian_vectors.T) / np.sqrt(k)
@@ -16,9 +16,6 @@ def adaptive_shell_algorithm(kernel_data, queries, k=1, num_spheres=50):
     print('init tree')
     tree = KDTree(projected_data)
 
-    max_distance = np.max(projected_data) - np.min(projected_data)
-    
-    radii = np.linspace(0, max_distance, num_spheres + 1)[1:]
     print(f"dataset size: {dataset_size}")
     def estimate_kernel_squared(query):
         distances, _ = tree.query(query, k=2)
@@ -79,11 +76,12 @@ def adaptive_shell_algorithm(kernel_data, queries, k=1, num_spheres=50):
         query_time = time.time() - query_start_time
         print(query_time)
         actual_kernel = np.mean([student_kernel(np.linalg.norm(x - q)) for x in kernel_data])
+        
         actual_kernel_sq = np.mean([student_kernel(np.linalg.norm(x - q)**2) for x in kernel_data])
         percent_error = np.abs(averageStudent - actual_kernel) / actual_kernel
-        print(f"error: {percent_error}")
+        print(f"k, e {actual_kernel}, {percent_error}")
         
-        print("variance over kernelsq:", variance / actual_kernel_sq)
+        print("estimatedvar over kernelsq:", variance / actual_kernel_sq)
         results.append((averageStudent, actual_kernel, percent_error, query_time))
 
     overall_error = np.mean([r[2] for r in results])
@@ -207,20 +205,20 @@ def plot_k_comparison(adaptive_results, hashing_results):
     plt.show()
 
 import gzip
-# with gzip.open('large_data/SUSY.csv.gz', 'rb') as f:
-#     susy_data = np.genfromtxt(f, delimiter=',', max_rows=1000000)
+with gzip.open('large_data/SUSY.csv.gz', 'rb') as f:
+    susy_data = np.genfromtxt(f, delimiter=',', max_rows=1000000)
 
 # with gzip.open('large_data/HIGGS.csv.gz', 'rb') as f:
 #     higgs_data = np.genfromtxt(f, delimiter=',', max_rows=4000000)
-home_data = np.genfromtxt('large_data/HT_Sensor_dataset.dat', skip_header=1, delimiter=None)
-data = home_data
-kernel_data = data[0:10000]
+# home_data = np.genfromtxt('large_data/HT_Sensor_dataset.dat', skip_header=1, delimiter=None)
+data = susy_data
+kernel_data = data[0:1000]
 queries = data[2000:2010]
 # kernel_data = np.loadtxt('large_data/shuttle.tst')
 # queries = np.loadtxt('large_data/shuttle.tst')[0:10]
 print("Data loaded")
 
-num_trials = 5  
+num_trials = 1
 adaptive_results, hashing_results = compare_k_values(kernel_data, queries, num_trials)
 
 # plot_k_comparison(adaptive_results, hashing_results)
