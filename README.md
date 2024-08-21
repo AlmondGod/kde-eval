@@ -99,8 +99,9 @@ When we recieve the query, we also take its dot product with the gaussian vector
 Now, using this variance estimate, we run the adaptive sampling algorithm using our new formula for number of samples $T = \frac{\sigma^2}{\epsilon^2 k^2}$.
 
 ## Informal Results
-- The algorithm worked acceptably well, and often defeated hashing-based estimation in both time to execute and accuracy on certain datasets 
-- There were some subtleties in proving that it will always work.
+- The often defeated hashing-based estimation in both time to execute and accuracy on certain datasets, although it also was defeated by a large gap in both time and accuracy on other datasets
+- This characteristic of the algorithm was suspected from the start: it can only do better than regular random sampling when the query-dataset variance on the kernel is low enough to allow for significant speedup, which for some datasets is simply not the case
+- There were some subtleties in proving that the algorithm will always overestimate the kernel squared to overestimate the variance and ensure our number of samples ensures that our final estimate is within the bounds defined by $\epsilon$ and $\delta$ as described above
 - One needed to be careful in upper bounding how much the variance changes after a projection (although we saw empirically that it almost always increases).
 
 ## Other Approaches
