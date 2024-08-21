@@ -4,3 +4,7 @@ our_data_askit.data
 covtype_normed.csv
 
 large_data/
+
+mnist2500_X.txt
+
+.venv
