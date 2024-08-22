@@ -15,6 +15,8 @@ see [src/README.md](src/README.md) for a filemap.
 
 # Shell-Adaptive Random Sampling
 
+We created a new algorithm to efficiently estimate kernel densities of low-variance kernels using dimensionality reduction and KD-trees for kernel squared estimation as a proxy for variance estimation, then adaptive random sampling with number of required samples dependent on estimated variance for final KDE. The algorithm is also especially useful for large datasets where the instantiation time of data structures for other KDE algorithms often grows superlinearly with the size of the dataset.
+
 ## Introduction
 Estimation of sums (or averages), linear time algorithms, worst-case complexity, and (1+ε)-approximations. We'll conclude with one of the main questions: when can one use random sampling to obtain practical, worst-case complexity results in the context of KDE?
 
@@ -108,3 +110,8 @@ Now, using this variance estimate, we run the adaptive sampling algorithm using 
 Other approaches for estimating upper bounds on the variance were attempted and were discovered to be unideal:
 
 Tried to use the taylor approximation of the variance to separate out and precompute certain terms towards efficient variance estimation. However, the bound of this method was not tight eough (often 100x off)
+
+
+# Applications to tSNE
+
+see []()
